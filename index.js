@@ -1,8 +1,9 @@
 const { chromium } = require("playwright");
-const sharp = require("sharp")
+const sharp = require("sharp");
+const fs = require("fs");
 
 // KWARGS
-const url = "https://www.youtube.com/watch?v=amxDI97hMeQ";
+const url = "https://www.youtube.com/watch?v=FtutLA63Cp8";
 const frames = 1500;
 const targetWidth = 24;
 const targetHeight = 18;
@@ -27,9 +28,9 @@ async function main(){
 
 
         await sharp(imgBuffer).resize(targetWidth, targetHeight).threshold(100).toFile('test.png');
-
+        console.log(`Parsed frame number ${i}`);
     }
-    await browser.close()
+    await browser.close();
 
 }
 
