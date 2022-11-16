@@ -1,0 +1,28 @@
+{
+  "name": "youtube-frame-ripper",
+  "description": "This tool utilizes the node modules playwright and sharp to take screenshots of individual frames from YouTube videos and convert them to black and white frames which can be used for text-based art.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LucientZ/YouTube-Frame-Ripper.git"
+  },
+  "keywords": [
+    "YouTube",
+    "Webscraper",
+    "Text-Art"
+  ],
+  "author": "LucienZ",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LucientZ/YouTube-Frame-Ripper/issues"
+  },
+  "homepage": "https://github.com/LucientZ/YouTube-Frame-Ripper#readme",
+  "dependencies": {
+    "playwright": "^1.27.1",
+    "sharp": "^0.31.2"
+  }
+}
