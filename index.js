@@ -3,10 +3,16 @@ const sharp = require("sharp");
 const fs = require("fs");
 
 // KWARGS
-const url = "https://www.youtube.com/watch?v=FtutLA63Cp8";
-const frames = 1500;
+const url = "https://www.youtube.com/watch?v=amxDI97hMeQ";
+const frames = 1100;
 const targetWidth = 24;
 const targetHeight = 18;
+const filetype = "image"; // Options are 'image' and 'text' 
+
+async function sharp_to_text(imgBuffer){
+    //stub
+}
+
 
 async function main(){
     const browser = await chromium.launch();
@@ -23,12 +29,21 @@ async function main(){
 
     for(let i = 0; i < frames; i++){
         // Take screenshot of video div and put into a buffer to be processed by sharp
-        const imgBuffer = await page.locator('.ytp-iv-video-content').screenshot();
+        let imgBuffer = await page.locator('.ytp-iv-video-content').screenshot();
         await page.keyboard.down('.'); // Moves to next frame
 
 
-        await sharp(imgBuffer).resize(targetWidth, targetHeight).threshold(100).toFile('test.png');
+        imgBuffer = await sharp(imgBuffer).resize(targetWidth, targetHeight).threshold(100).toBuffer();
+
+        if(filetype == "image"){
+            await sharp(imgBuffer).png({pallete: true}).toFile(`frames/frame${i}.png`);
+        }
+        else if(filetype == "text"){
+            sharp_to_text(imgBuffer);
+        }
         console.log(`Parsed frame number ${i}`);
+
+
     }
     await browser.close();
 
