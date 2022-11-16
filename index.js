@@ -10,7 +10,7 @@ const targetHeight = 18;
 const filetype = "text"; // Options are 'image' and 'text' 
 
 
-function list_to_char(pix1, pix2, pix3, pix4){
+function pix_to_char(pix1, pix2, pix3, pix4){
 
     if (pix1 == 255 && pix2 == 255 && pix3 == 255 && pix4 == 255){
         return '▉';
@@ -24,7 +24,7 @@ function list_to_char(pix1, pix2, pix3, pix4){
     else if (pix1 == 255 && pix2 == 255 && pix3 == 0 && pix4 == 255){
         return '▜'
     }
-    else if (pix1 == 0 && pix2 == 255 && pix3 == 255 && pix4 == 0){
+    else if (pix1 == 255 && pix2 == 255 && pix3 == 255 && pix4 == 0){
         return '▛'
     }
     else if (pix1 == 0 && pix2 == 0 && pix3 == 255 && pix4 == 255){
@@ -56,20 +56,18 @@ function list_to_char(pix1, pix2, pix3, pix4){
 
 
 async function sharp_to_text(imgBuffer){
-    const frame = await sharp(imgBuffer).removeAlpha().raw().toBuffer();
+    const frame = await sharp(imgBuffer).raw().toBuffer();
     let text_frame = [];
 
-    for(let i = 0; i < targetHeight*3; i += targetWidth*6){
-        var row = "";
-        for(let j = i; j < targetWidth * 3; j += 6){
-            row += list_to_char(frame.at(j), frame.at(j+3), frame.at(j+targetWidth*3), frame.at(j+targetWidth*3 + 3));
+    for(let i = 0; i < targetHeight*targetWidth*3; i += targetWidth*3*2){
+        let row = "";
+        for(let j = i; j < i + targetWidth * 3; j += 6){
+            row += pix_to_char(frame.at(j), frame.at(j+3), frame.at(j+targetWidth*3), frame.at(j+targetWidth*3 + 3));
         }
-        row += '\n';
         console.log(row);
         text_frame.push(row);
     }
-    text_frame.push('\n')
-    
+    text_frame.push('\n');
 }
 
 
@@ -83,9 +81,9 @@ async function main(){
     const page = await browser.newPage();
 
     await page.goto(url);
-    //await page.click("[aria-label='Play']");
+    await page.waitForTimeout(2000);
 
-    await page.keyboard.down('KeyK');
+    await page.keyboard.press('K');
 
     // Hides playbar and lower gradient
     await page.locator(".ytp-chrome-bottom").evaluate(element => element.style.display = 'none');
@@ -94,10 +92,10 @@ async function main(){
     for(let i = 0; i < frames; i++){
         // Take screenshot of video div and put into a buffer to be processed by sharp
         let imgBuffer = await page.locator('.ytp-iv-video-content').screenshot();
-        await page.keyboard.down('.'); // Moves to next frame
+        await page.keyboard.press('.'); // Moves to next frame
 
 
-        imgBuffer = await sharp(imgBuffer).resize(targetWidth, targetHeight).threshold(100).toBuffer();
+        imgBuffer = await sharp(imgBuffer).removeAlpha().resize(targetWidth, targetHeight).threshold(100).toBuffer();
 
         if(filetype == "image"){
             await sharp(imgBuffer).png({pallete: true}).toFile(`frames/frame${i}.png`);
@@ -107,6 +105,7 @@ async function main(){
             sharp_to_text(imgBuffer);
             await sharp(imgBuffer).png({pallete: true}).toFile(`test.png`);
         }
+
         
 
 
