@@ -10,21 +10,48 @@ const targetHeight = 18;
 const filetype = "text"; // Options are 'image' and 'text' 
 
 
-function list_to_char(tuple){
-    switch (tuple){
-        case (255,255,255,255):
-            return "▉";
-        case (0,255,255,255):
-            return "▟";
-        case (255,0,255,255):
-            return "▙";
-        case (255,255,0,255):
-            return "▜";
-        case (255,255,255,0):
-            return "▛";
-        default:
-            return "▉"
+function list_to_char(pix1, pix2, pix3, pix4){
+
+    if (pix1 == 255 && pix2 == 255 && pix3 == 255 && pix4 == 255){
+        return '▉';
     }
+    else if (pix1 == 0 && pix2 == 255 && pix3 == 255 && pix4 == 255){
+        return '▟'
+    }
+    else if (pix1 == 255 && pix2 == 0 && pix3 == 255 && pix4 == 255){
+        return '▙'
+    }
+    else if (pix1 == 255 && pix2 == 255 && pix3 == 0 && pix4 == 255){
+        return '▜'
+    }
+    else if (pix1 == 0 && pix2 == 255 && pix3 == 255 && pix4 == 0){
+        return '▛'
+    }
+    else if (pix1 == 0 && pix2 == 0 && pix3 == 255 && pix4 == 255){
+        return '▄'
+    }
+    else if (pix1 == 255 && pix2 == 255 && pix3 == 0 && pix4 == 0){
+        return '▀'
+    }
+    else if (pix1 == 255 && pix2 == 0 && pix3 == 255 && pix4 == 0){
+        return '▌'
+    }
+    else if (pix1 == 0 && pix2 == 255 && pix3 == 0 && pix4 == 255){
+        return '▐'
+    }
+    else if (pix1 == 255 && pix2 == 0 && pix3 == 0 && pix4 == 255){
+        return '▚'
+    }
+    else if (pix1 == 0 && pix2 == 255 && pix3 == 255 && pix4 == 0){
+        return '▞'
+    }
+    else if (pix1 == 0 && pix2 == 0 && pix3 == 0 && pix4 == 0){
+        return ' '
+    }
+    else{
+        return '▉'
+    }
+
 }
 
 
@@ -32,16 +59,16 @@ async function sharp_to_text(imgBuffer){
     const frame = await sharp(imgBuffer).removeAlpha().raw().toBuffer();
     let text_frame = [];
 
-    for(let i = 0; i < frame.length; i += targetWidth*6){
+    for(let i = 0; i < targetHeight*3; i += targetWidth*6){
         var row = "";
         for(let j = i; j < targetWidth * 3; j += 6){
-            row += list_to_char((frame.at(j), frame.at(j+3), frame.at(j+targetWidth*3), frame.at(j+targetWidth*3 + 3)));
+            row += list_to_char(frame.at(j), frame.at(j+3), frame.at(j+targetWidth*3), frame.at(j+targetWidth*3 + 3));
         }
-        row += "\n";
+        row += '\n';
         console.log(row);
-        //text_frame.push(row);
+        text_frame.push(row);
     }
-    
+    text_frame.push('\n')
     
 }
 
@@ -78,6 +105,7 @@ async function main(){
         }
         else if(filetype == "text"){
             sharp_to_text(imgBuffer);
+            await sharp(imgBuffer).png({pallete: true}).toFile(`test.png`);
         }
         
 
