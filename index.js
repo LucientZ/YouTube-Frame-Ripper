@@ -3,13 +3,13 @@ const sharp = require("sharp");
 const fs = require("fs");
 
 // KWARGS
-const url = "https://www.youtube.com/watch?v=amxDI97hMeQ";
-const frames = 1100;
-const targetWidth = 16;
-const targetHeight = 12;
-const fileType = "text"; // Options are 'image' and 'text'
-const printToConsole = true; // Only matters if fileType is set to 'text'
-const fileOutputName = "frames.dat";
+const url = ""; // Currently only works with youtube links. Does not skip ads, so keep that in mind
+const frames = 1200;                                       // Amount of frames to be captured
+const targetWidth = 16;                                    // Width of final frame
+const targetHeight = 12;                                   // Height of final frame
+const fileType = "text";                                   // Options are 'image' and 'text'
+const printToConsole = true;                               // Only matters if fileType is set to 'text'
+const fileOutputName = "funny_frames.dat";
 
 
 function pix_to_char(pix1, pix2, pix3, pix4){
@@ -71,7 +71,7 @@ function pix_to_char(pix1, pix2, pix3, pix4){
 
 async function sharp_to_text(imgBuffer){
     const frame = await sharp(imgBuffer).raw().toBuffer();
-    let text_frame = [];
+    let final_string = "";
 
     for(let i = 0; i < targetHeight*targetWidth*3; i += targetWidth*3*2){
         let row = "";
@@ -79,18 +79,13 @@ async function sharp_to_text(imgBuffer){
             row += pix_to_char(frame.at(j), frame.at(j+3), frame.at(j+targetWidth*3), frame.at(j+targetWidth*3 + 3));
         }
         row += '\n'
-        text_frame.push(row);
+        final_string += row;
     }
-    text_frame.push('\n');
-
+    final_string += "\n";
     if(printToConsole){
-        let finalStr = "";
-        for(let i = 0; i < text_frame.length; i++){
-            finalStr += text_frame[i];
-        }
-        console.log(finalStr);
+        console.log(final_string);
     }
-    return text_frame;
+    return final_string;
 }
 
 
@@ -103,22 +98,29 @@ async function main(){
     const browser = await chromium.launch();
     const page = await browser.newPage();
 
+    // Goes to url and waits 2 seconds for it to load
     await page.goto(url);
     await page.waitForTimeout(2000);
 
+    // Plays video if paused
     await page.keyboard.press('k');
 
     // Hides playbar and lower gradient
     await page.locator(".ytp-chrome-bottom").evaluate(element => element.style.display = 'none');
     await page.locator(".ytp-gradient-bottom").evaluate(element => element.style.display = 'none');
 
+    fs.writeFile(`frames/${fileOutputName}`, `# Block text animation frames.\n# UTF-8 or UTF-16\n# Width\n${targetWidth/2}\n# (${targetWidth}px)\n# Height:\n${targetHeight/2}\n# (${targetHeight}px)\n\n`, (err) => {console.log("Error: ", err)});
+    
 
     for(let i = 0; i < frames; i++){
         // Take screenshot of video div and put into a buffer to be processed by sharp
         let imgBuffer = await page.locator('.ytp-iv-video-content').screenshot();
         await page.keyboard.press('.'); // Moves to next frame
 
-        imgBuffer = await sharp(imgBuffer).removeAlpha().resize(targetWidth, targetHeight).threshold(100).toBuffer();
+        if (fileType == "text"){
+            imgBuffer = await sharp(imgBuffer).removeAlpha().resize(targetWidth, targetHeight).threshold(100).toBuffer();
+        }
+        
 
         if(fileType == "image"){
             await sharp(imgBuffer).png({pallete: true}).toFile(`frames/frame${i}.png`);
@@ -128,8 +130,13 @@ async function main(){
             }
         }
         else if(fileType == "text"){
-            sharp_to_text(imgBuffer);
-            await sharp(imgBuffer).png({pallete: true}).toFile(`test.png`);
+            let data = await sharp_to_text(imgBuffer);
+            await sharp(imgBuffer).png({pallete: true}).toFile(`preview.png`);
+            fs.appendFile(`frames/${fileOutputName}`, data, (err) => {/*pass*/});
+        }
+        else{
+            console.log("Invalid filetype: " + fileType);
+            break;
         }
 
         
