@@ -5,11 +5,11 @@ const fs = require("fs");
 // KWARGS
 const url = ""; // Currently only works with youtube links. Does not skip ads, so keep that in mind
 const frames = 1200;                                       // Amount of frames to be captured
-const targetWidth = 16;                                    // Width of final frame
-const targetHeight = 12;                                   // Height of final frame
-const fileType = "text";                                   // Options are 'image' and 'text'
+const targetWidth = 8;                                    // Width of final frame
+const targetHeight = 6;                                   // Height of final frame
+const fileType = "text";                                   // Options are 'image', 'text', and 'both'
 const printToConsole = true;                               // Only matters if fileType is set to 'text'
-const fileOutputName = "funny_frames.dat";
+const fileOutputName = "frames.dat";
 
 
 function pix_to_char(pix1, pix2, pix3, pix4){
@@ -118,7 +118,7 @@ async function main(){
         await page.keyboard.press('.'); // Moves to next frame
 
         if (fileType == "text"){
-            imgBuffer = await sharp(imgBuffer).removeAlpha().resize(targetWidth, targetHeight).threshold(100).toBuffer();
+            imgBuffer = await sharp(imgBuffer).removeAlpha().resize(targetWidth, targetHeight, {kernel: sharp.kernel.nearest}).threshold(100).toBuffer();
         }
         
 
@@ -132,6 +132,12 @@ async function main(){
         else if(fileType == "text"){
             let data = await sharp_to_text(imgBuffer);
             await sharp(imgBuffer).png({pallete: true}).toFile(`preview.png`);
+            fs.appendFile(`frames/${fileOutputName}`, data, (err) => {/*pass*/});
+        }
+        else if(fileType == "both"){
+            let data = await sharp_to_text(imgBuffer);
+            await sharp(imgBuffer).png({pallete: true}).toFile(`frames/frame${i}.png`);
+            console.log(`Saved frames/frame${i}.png`);
             fs.appendFile(`frames/${fileOutputName}`, data, (err) => {/*pass*/});
         }
         else{
