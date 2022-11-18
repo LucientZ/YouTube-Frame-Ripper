@@ -3,10 +3,12 @@ const sharp = require("sharp");
 const fs = require("fs");
 
 // KWARGS
-const url = ""; // Currently only works with youtube links. Does not skip ads, so keep that in mind
+const url = "https://www.youtube.com/watch?v=FtutLA63Cp8"; // Currently only works with youtube links. Does not skip ads, so keep that in mind
 const frames = 1200;                                       // Amount of frames to be captured
-const targetWidth = 8;                                    // Width of final frame
-const targetHeight = 6;                                   // Height of final frame
+const playbackSpeed = "Normal";                             // 
+const duration = 220;                                      // Video duration in seconds
+const targetWidth = 8;                                     // Width of final frame
+const targetHeight = 6;                                    // Height of final frame
 const fileType = "text";                                   // Options are 'image', 'text', and 'both'
 const printToConsole = true;                               // Only matters if fileType is set to 'text'
 const fileOutputName = "frames.dat";
@@ -98,12 +100,20 @@ async function main(){
     const browser = await chromium.launch();
     const page = await browser.newPage();
 
-    // Goes to url and waits 2 seconds for it to load
+    // Goes to url and waits 1 second for it to load
     await page.goto(url);
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
 
     // Plays video if paused
     await page.keyboard.press('k');
+
+    // Slow Video down
+    await page.locator(".ytp-settings-button").click();
+    await page.screenshot({path: "test.png"});
+    await page.locator("text =Playback speed").click();
+    await page.waitForTimeout(1000);
+    await page.locator(`text =${playbackSpeed}`).click();
+    await page.locator(".ytp-settings-button").click();
 
     // Hides playbar and lower gradient
     await page.locator(".ytp-chrome-bottom").evaluate(element => element.style.display = 'none');
@@ -111,13 +121,14 @@ async function main(){
 
     fs.writeFile(`frames/${fileOutputName}`, `# Block text animation frames.\n# UTF-8 or UTF-16\n# Width\n${targetWidth/2}\n# (${targetWidth}px)\n# Height:\n${targetHeight/2}\n# (${targetHeight}px)\n\n`, (err) => {console.log("Error: ", err)});
     
+    // Reset video to beginning
+    await page.keyboard.press('0');
 
     for(let i = 0; i < frames; i++){
         // Take screenshot of video div and put into a buffer to be processed by sharp
         let imgBuffer = await page.locator('.ytp-iv-video-content').screenshot();
-        await page.keyboard.press('.'); // Moves to next frame
 
-        if (fileType == "text"){
+        if (fileType == "text" || fileType == "both"){
             imgBuffer = await sharp(imgBuffer).removeAlpha().resize(targetWidth, targetHeight, {kernel: sharp.kernel.nearest}).threshold(100).toBuffer();
         }
         
@@ -146,7 +157,7 @@ async function main(){
         }
 
         
-
+        await page.waitForTimeout(duration*1000/frames);
 
     }
     await browser.close();
