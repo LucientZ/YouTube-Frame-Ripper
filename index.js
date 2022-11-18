@@ -123,6 +123,32 @@ async function main(){
 
     fs.writeFile(`frames/${fileOutputName}`, `# Block text animation frames.\n# UTF-8 or UTF-16\n# Width\n${targetWidth/2}\n# (${targetWidth}px)\n# Height:\n${targetHeight/2}\n# (${targetHeight}px)\n\n`, (err) => {console.log("Error: ", err)});
     
+    // Change duration based on playback speed. Multiply by reciprocal of multiplier.
+    let newDuration = 1;
+    switch(playbackSpeed){
+        case "0.25":
+            newDuration = duration * 4;
+            break;
+        case "0.5":
+            newDuration = duration * 2;
+            break;
+        case "1.25":
+            newDuration = duration * 5/4;
+            break;
+        case "1.5":
+            newDuration = duration * 6/4;
+            break;
+        case "1.75":
+            newDuration = duration * 4/7;
+            break;
+        case "2":
+            newDuration = duration * 1/2;
+            break;
+        default:
+            newDuration = duration;
+            break;
+    }
+
     // Reset video to beginning
     await page.keyboard.press('0');
 
@@ -159,7 +185,7 @@ async function main(){
         }
 
         
-        await page.waitForTimeout(duration*1000/frames);
+        await page.waitForTimeout(newDuration*1000/frames);
 
     }
     await browser.close();
