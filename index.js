@@ -5,7 +5,7 @@ const fs = require("fs");
 // KWARGS
 const url = "https://www.youtube.com/watch?v=FtutLA63Cp8"; // Currently only works with youtube links. Does not skip ads, so keep that in mind
 const frames = 1200;                                       // Amount of frames to be captured
-const playbackSpeed = "Normal";                             // 
+const playbackSpeed = "Normal";                            // Options are '0.25', '0.5', 'Normal', '1.25', '1.5', '1.75', and '2'
 const duration = 220;                                      // Video duration in seconds
 const targetWidth = 8;                                     // Width of final frame
 const targetHeight = 6;                                    // Height of final frame
@@ -35,7 +35,7 @@ function pix_to_char(pix1, pix2, pix3, pix4){
         return '▅';
     }
     else if (pix1 == 255 && pix2 == 255 && pix3 == 0 && pix4 == 0){
-        return '▜';
+        return '▜'; // Since there isn't a block character with a consistant width that represents two white pixels on top, this is the best approximation.
     }
     else if (pix1 == 255 && pix2 == 0 && pix3 == 255 && pix4 == 0){
         return '▙';
@@ -72,9 +72,11 @@ function pix_to_char(pix1, pix2, pix3, pix4){
 
 
 async function sharp_to_text(imgBuffer){
+    // Frame is a list of every pixel in frame. 
     const frame = await sharp(imgBuffer).raw().toBuffer();
     let final_string = "";
 
+    // Parse frame as 2x2 chunks. Return characters depending on what pixels in original frame are white and which are black.
     for(let i = 0; i < targetHeight*targetWidth*3; i += targetWidth*3*2){
         let row = "";
         for(let j = i; j < i + targetWidth * 3; j += 6){
@@ -83,6 +85,7 @@ async function sharp_to_text(imgBuffer){
         row += '\n'
         final_string += row;
     }
+    // Add new line to separate frames properly in output file
     final_string += "\n";
     if(printToConsole){
         console.log(final_string);
@@ -109,7 +112,6 @@ async function main(){
 
     // Slow Video down
     await page.locator(".ytp-settings-button").click();
-    await page.screenshot({path: "test.png"});
     await page.locator("text =Playback speed").click();
     await page.waitForTimeout(1000);
     await page.locator(`text =${playbackSpeed}`).click();
@@ -165,6 +167,3 @@ async function main(){
 }
 
 main();
-
-
-//style="display:none;"
