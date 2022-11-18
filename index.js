@@ -146,7 +146,6 @@ async function main(){
             break;
         default:
             newDuration = duration;
-            break;
     }
 
     // Reset video to beginning
