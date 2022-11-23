@@ -4,14 +4,16 @@ const ytdl = require("ytdl-core");
 const extractFrames = require("ffmpeg-extract-frames");
 
 
-// KWARGS
+//// KWARGS ////
 const url = "https://www.youtube.com/watch?v=FtutLA63Cp8"; // Currently only works with youtube links.
+const fileOutputName = "Bad-Apple";                        // Output name to be appended to all relevant file names
+const framesPerSecond = 1;                                 // Defines how many frames should be converted per second of the video
+const textOutput = true;                                   // Defines whether frames will be converted to text
+
+// Applies if textOutput is true
 const targetWidth = 8;                                     // Width of final frame
 const targetHeight = 6;                                    // Height of final frame
-const framesPerSecond = 24;                                            // Defines how many frames should be converted per second of the video
-const textOutput = true;                                   // Defines whether frames will be converted to text
 const printToConsole = true;                               // Only matters if textOutput is set to true
-const fileOutputName = "Bad-Apple";                        // Output name to be appended to all relevant file names
 
 
 function pix_to_char(pix1, pix2, pix3, pix4){
@@ -99,22 +101,42 @@ async function sharp_to_text(imgBuffer){
 
 
 (async function main(){
-    if (targetHeight * targetWidth % 4 != 0 && fileType == "text"){
-        console.log("To output to text, area of frames in pixels must be a multiple of 4.");
-        return;
-    }
+    
 
     try{
-        console.log("Waiting for video to download...")
+        if (targetHeight * targetWidth % 4 != 0 && fileType == "text"){
+            console.log("To output to text, area of frames in pixels must be a multiple of 4.");
+            return;
+        }
+
+        let dir = `./${fileOutputName}-frames`;
+
+        if(!fs.existsSync(dir)){
+            fs.mkdirSync(dir);
+        }
+
+        console.log("Waiting for video to download...");
         await new Promise((resolve) => {
-            ytdl(url).pipe(fs.createWriteStream(`frames/${fileOutputName}.mp4`)).on("close", () => {
+            ytdl(url).pipe(fs.createWriteStream(`${dir}/${fileOutputName}.mp4`)).on("close", () => {
                 resolve();
             })
         });
-        console.log("Download complete!\n");
+        console.log("Download complete.\n");
 
-        const options = {input: `frames/${fileOutputName}.mp4`, output: `frames/${fileOutputName}-frame-%d.jpg`, fps: framesPerSecond};
-        extractFrames(options);
+
+        console.log("Converting video to frames...");
+        const options = {input: `${dir}/${fileOutputName}.mp4`, output: `${dir}/frame-%d.jpg`, fps: framesPerSecond};
+        await new Promise((resolve) => {
+            extractFrames(options).finally(() => {
+                resolve();
+            });
+        });
+
+        if(textOutput){
+            //stub
+        }
+
+        console.log("Frame Conversion Complete.\n");
 
     }
     catch(error){
