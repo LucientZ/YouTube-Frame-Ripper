@@ -6,14 +6,14 @@ const extractFrames = require("ffmpeg-extract-frames");
 
 //// KWARGS ////
 const url = "https://www.youtube.com/watch?v=FtutLA63Cp8"; // Currently only works with youtube links.
-const fileOutputName = "Bad-Apple";                        // Output name to be appended to all relevant file names
-const framesPerSecond = 24;                                 // Defines how many frames should be converted per second of the video
-const textOutput = true;                                   // Defines whether frames will be converted to text
+const fileOutputName = "Bad-Apple";                        // Output name to be appended to all relevant file names.
+const framesPerSecond = 12;                                // Defines how many frames should be converted per second of the video. Enter 0 to be the fps of the video.
+const textOutput = true;                                   // Defines whether frames will be converted to text.
 
 // Applies if textOutput is true
-const targetWidth = 8;                                     // Width of final frame
-const targetHeight = 6;                                    // Height of final frame
-const printToConsole = true;                               // Only matters if textOutput is set to true
+const targetWidth = 8;                                     // Width of final frame.
+const targetHeight = 6;                                    // Height of final frame.
+const printToConsole = true;                               // Prints text frames to the console as an animation. Playback speed will be framesPerSecond. If set to 0 or less, default will be 24.
 
 function pixelToBlock(pix1, pix2, pix3, pix4){
     /*
@@ -122,7 +122,11 @@ async function sleep(time){
 
 
         console.log("Converting video to frames...");
-        const options = {input: `${dir}/${fileOutputName}.mp4`, output: `${dir}/frame-%d.jpg`, fps: framesPerSecond};
+        let options = {input: `${dir}/${fileOutputName}.mp4`, output: `${dir}/frame-%d.jpg`, fps: framesPerSecond};
+        if(fps <= 0){
+            // When fps is 0, sets it to default
+            options = {input: `${dir}/${fileOutputName}.mp4`, output: `${dir}/frame-%d.jpg`};
+        }
         await new Promise((resolve) => {
             extractFrames(options).finally(() => {
                 resolve();
@@ -150,10 +154,16 @@ async function sleep(time){
         console.log("Frame Conversion Complete. Playing in 5 seconds.");
         await sleep(10000);
 
+        // Separate variable playbackSpeed used to 
+        let playbackSpeed = framesPerSecond;
+        if(playbackSpeed <= 0){
+            playbackSpeed = 24;
+        }
+
         console.log("\u001B[?25l"); //Hides cursor in console
         for(let i = 0; i < frames.length; i++){
             console.log(frames.at(i));
-            await sleep((1 / framesPerSecond) * 1000); // Sleeps for amount of time a frame should be displayed
+            await sleep((1 / playbackSpeed) * 1000); // Sleeps for amount of time a frame should be displayed
             console.clear();
         }
         console.log("\u001B[?25h"); //Shows cursor in console
