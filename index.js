@@ -16,7 +16,7 @@ const targetHeight = 6;                                    // Height of final fr
 const printToConsole = true;                               // Only matters if textOutput is set to true
 
 
-function pix_to_char(pix1, pix2, pix3, pix4){
+function pixelToBlock(pix1, pix2, pix3, pix4){
     /*
     Converts black and white pixel data from a 2 x 2 grid to the corresponding block character.
     These work best with monospace fonts.
@@ -77,25 +77,22 @@ function pix_to_char(pix1, pix2, pix3, pix4){
 }
 
 
-async function sharp_to_text(imgBuffer){
+async function bufferToBlock(imgBuffer){
     // Frame is a list of every pixel in frame. 
-    const frame = await sharp(imgBuffer).raw().toBuffer();
+    const frame = await sharp(imgBuffer).removeAlpha().threshold().raw().toBuffer();
     let final_string = "";
 
     // Parse frame as 2x2 chunks. Return characters depending on what pixels in original frame are white and which are black.
     for(let i = 0; i < targetHeight*targetWidth*3; i += targetWidth*3*2){
         let row = "";
         for(let j = i; j < i + targetWidth * 3; j += 6){
-            row += pix_to_char(frame.at(j), frame.at(j+3), frame.at(j+targetWidth*3), frame.at(j+targetWidth*3 + 3));
+            row += pixelToBlock(frame.at(j), frame.at(j+3), frame.at(j+targetWidth*3), frame.at(j+targetWidth*3 + 3));
         }
-        row += '\n'
+        row += '\n';
         final_string += row;
     }
     // Add new line to separate frames properly in output file
     final_string += "\n";
-    if(printToConsole){
-        console.log(final_string);
-    }
     return final_string;
 }
 
@@ -104,11 +101,7 @@ async function sharp_to_text(imgBuffer){
     
 
     try{
-        if (targetHeight * targetWidth % 4 != 0 && fileType == "text"){
-            console.log("To output to text, area of frames in pixels must be a multiple of 4.");
-            return;
-        }
-
+        
         let dir = `./${fileOutputName}-frames`;
 
         if(!fs.existsSync(dir)){
@@ -121,7 +114,7 @@ async function sharp_to_text(imgBuffer){
                 resolve();
             })
         });
-        console.log("Download complete.\n");
+        console.log("Download complete.");
 
 
         console.log("Converting video to frames...");
@@ -133,14 +126,27 @@ async function sharp_to_text(imgBuffer){
         });
 
         if(textOutput){
-            //stub
+            // To get a block text output, the resolution must have an area that is evenly divisible by 4.
+            if (targetHeight * targetWidth % 4 != 0){
+                console.log("To output to text, area of frames in pixels must be a multiple of 4.");
+                return;
+            }
+            let i = 1;
+            fs.writeFile(`${dir}/${fileOutputName}.dat`, `# Block text animation frames\n# UTF-8 or UTF-16\n# Width: ${targetWidth}\n# Height: ${targetHeight}\n\n`, (error) => {/*pass*/});
+            while(fs.existsSync(`${dir}/frame-${i}.jpg`)){
+                let imgBuffer = await sharp(`${dir}/frame-${i}.jpg`).resize(targetWidth, targetHeight, {kernel: sharp.kernel.nearest}).toBuffer();
+                let imgString = await bufferToBlock(imgBuffer);
+                fs.appendFile(`${dir}/${fileOutputName}.dat`, imgString, (error) => {/*pass*/});
+                i++;
+            }
         }
+        console.log("Frame Conversion Complete.");
 
-        console.log("Frame Conversion Complete.\n");
+
 
     }
     catch(error){
-        console.log(error);
+        console.log("Error: ", error);
     }
 
 })();
