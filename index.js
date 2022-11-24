@@ -7,7 +7,7 @@ const extractFrames = require("ffmpeg-extract-frames");
 //// KWARGS ////
 const url = "https://www.youtube.com/watch?v=FtutLA63Cp8"; // Currently only works with youtube links.
 const fileOutputName = "Bad-Apple";                        // Output name to be appended to all relevant file names.
-const framesPerSecond = 1;                                // Defines how many frames should be converted per second of the video. Enter 0 to be the fps of the video.
+const framesPerSecond = 12;                                // Defines how many frames should be converted per second of the video. Enter 0 to be the fps of the video.
 const textOutput = true;                                   // Defines whether frames will be converted to text.
 
 // Applies if textOutput is true
