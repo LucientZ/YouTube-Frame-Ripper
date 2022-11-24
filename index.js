@@ -167,7 +167,7 @@ async function sleep(time){
             }
         }
         console.log("Frame Conversion Complete. Playing in 5 seconds.");
-        await sleep(10000);
+        await sleep(5000);
 
         // Separate variable playbackSpeed used to 
         let playbackSpeed = framesPerSecond;
