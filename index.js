@@ -7,7 +7,7 @@ const extractFrames = require("ffmpeg-extract-frames");
 //// KWARGS ////
 const url = "https://www.youtube.com/watch?v=FtutLA63Cp8"; // Currently only works with youtube links.
 const fileOutputName = "Bad-Apple";                        // Output name to be appended to all relevant file names
-const framesPerSecond = 1;                                 // Defines how many frames should be converted per second of the video
+const framesPerSecond = 24;                                 // Defines how many frames should be converted per second of the video
 const textOutput = true;                                   // Defines whether frames will be converted to text
 
 // Applies if textOutput is true
@@ -149,11 +149,14 @@ async function sleep(time){
         }
         console.log("Frame Conversion Complete.");
 
+
+        console.log("\u001B[?25l"); //Hides cursor in console
         for(let i = 0; i < frames.length; i++){
             console.log(frames.at(i));
-            await sleep((1 / framesPerSecond) * 1000);
+            await sleep((1 / framesPerSecond) * 1000); // Sleeps for amount of time a frame should be displayed
             console.clear();
         }
+        console.log("\u001B[?25h"); //Shows cursor in console
             
 
     }
