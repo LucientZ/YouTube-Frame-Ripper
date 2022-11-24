@@ -1,12 +1,12 @@
 # YouTube-Frame-Ripper
 This tool utilizes node packages to rip frames from a youtube video and convert them to block-text characters. 
 
-### <u>Dependencies</u>
+### <ins>Dependencies</ins>
 - ffmpeg-extract-frames
 - sharp
 - ytdl-core
 
-### <u>How to use</u>
+### <ins>How to use</ins>
 Before using, install the dependencies in the root directory. This can be done easily utilizing the following commands in the terminal.
 
 ```
