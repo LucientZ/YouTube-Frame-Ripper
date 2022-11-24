@@ -7,9 +7,13 @@ This tool utilizes node packages to rip frames from a youtube video and convert 
 - ytdl-core
 
 ### <ins>How to use</ins>
-Before using, install the dependencies in the root directory. This can be done easily utilizing the following commands in the terminal.
+Before using, install the dependencies in the root directory. This can be done easily utilizing the following command in the terminal.
 
 ```
+npm install
+```
+Or, alternatively:
+```bash
 npm install ffmpeg-extract-frames
 npm install sharp
 npm install ytdl-core
@@ -41,6 +45,6 @@ Most of the arguments are pretty self-explanatory, but here's a rundown of what 
 
 Once the keyword arguments are set, just run the program and everything will be done automatically. 
 
-```
+```bash
 node ./index.js
 ```
