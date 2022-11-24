@@ -7,7 +7,7 @@ const extractFrames = require("ffmpeg-extract-frames");
 //// KWARGS ////
 const url = "https://www.youtube.com/watch?v=FtutLA63Cp8"; // Currently only works with youtube links.
 const fileOutputName = "Bad-Apple";                        // Output name to be appended to all relevant file names.
-const framesPerSecond = 10;                                // Defines how many frames should be converted per second of the video. Enter 0 to be the fps of the video.
+const framesPerSecond = 12;                                // Defines how many frames should be converted per second of the video. Enter 0 to be the fps of the video.
 const textOutput = true;                                   // Defines whether frames will be converted to text.
 
 // Applies if textOutput is true
@@ -96,6 +96,7 @@ async function bufferToBlock(imgBuffer){
 }
 
 async function sleep(time){
+    // returns when promise is resolved which will happen in 'time' milliseconds
     return new Promise(resolve => {
         setTimeout(resolve, time)
     });
@@ -105,6 +106,20 @@ async function sleep(time){
     
 
     try{
+        // Variable Guards
+        if(targetWidth <= 0 || targetHeight <= 0){
+            console.log("targetWidth and targetHeight must be greater than 0.");
+            return;
+        }
+        else if(!(Number.isInteger(targetWidth) && Number.isInteger(targetHeight))){
+            console.log("targetWidth and targetHeight must be integer values.");
+            return;
+        }
+        else if(fileOutputName == ""){
+            console.log("File Output Name cannot be an empty string.");
+            return;
+        }
+
         let dir = `./${fileOutputName}-frames`;
         let frames = [];
 
@@ -124,7 +139,7 @@ async function sleep(time){
         console.log("Converting video to frames...");
         let options = {input: `${dir}/${fileOutputName}.mp4`, output: `${dir}/frame-%d.jpg`, fps: framesPerSecond};
         if(framesPerSecond <= 0){
-            // When fps is 0, sets it to default
+            // When fps is 0 or less, sets it to default
             options = {input: `${dir}/${fileOutputName}.mp4`, output: `${dir}/frame-%d.jpg`};
         }
         await new Promise((resolve) => {
