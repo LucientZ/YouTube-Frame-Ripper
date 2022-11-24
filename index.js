@@ -15,7 +15,6 @@ const targetWidth = 8;                                     // Width of final fra
 const targetHeight = 6;                                    // Height of final frame
 const printToConsole = true;                               // Only matters if textOutput is set to true
 
-
 function pixelToBlock(pix1, pix2, pix3, pix4){
     /*
     Converts black and white pixel data from a 2 x 2 grid to the corresponding block character.
@@ -96,13 +95,18 @@ async function bufferToBlock(imgBuffer){
     return final_string;
 }
 
+async function sleep(time){
+    return new Promise(resolve => {
+        setTimeout(resolve, time)
+    });
+}
 
 (async function main(){
     
 
     try{
-        
         let dir = `./${fileOutputName}-frames`;
+        let frames = [];
 
         if(!fs.existsSync(dir)){
             fs.mkdirSync(dir);
@@ -132,17 +136,25 @@ async function bufferToBlock(imgBuffer){
                 return;
             }
             let i = 1;
-            fs.writeFile(`${dir}/${fileOutputName}.dat`, `# Block text animation frames\n# UTF-8 or UTF-16\n# Width: ${targetWidth}\n# Height: ${targetHeight}\n\n`, (error) => {/*pass*/});
+            fs.writeFile(`${dir}/${fileOutputName}.dat`, `# Block text animation frames\n# UTF-8\n# Width: ${targetWidth}\n# Height: ${targetHeight}\n\n`, (error) => {/*pass*/});
             while(fs.existsSync(`${dir}/frame-${i}.jpg`)){
                 let imgBuffer = await sharp(`${dir}/frame-${i}.jpg`).resize(targetWidth, targetHeight, {kernel: sharp.kernel.nearest}).toBuffer();
                 let imgString = await bufferToBlock(imgBuffer);
                 fs.appendFile(`${dir}/${fileOutputName}.dat`, imgString, (error) => {/*pass*/});
+                if (printToConsole){
+                    frames.push(imgString);
+                }
                 i++;
             }
         }
         console.log("Frame Conversion Complete.");
 
-
+        for(let i = 0; i < frames.length; i++){
+            console.log(frames.at(i));
+            await sleep((1 / framesPerSecond) * 1000);
+            console.clear();
+        }
+            
 
     }
     catch(error){
