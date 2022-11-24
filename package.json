@@ -1,7 +1,7 @@
 {
   "name": "youtube-frame-ripper",
-  "description": "This tool utilizes the node modules playwright and sharp to take screenshots of individual frames from YouTube videos and convert them to black and white frames which can be used for text-based art.",
-  "version": "1.0.0",
+  "description": "This tool utilizes the modules sharp, ytdl-core, and ffmpeg-extract-frames to extract frames from YouTube videos. Can also be used to create text-based frames.",
+  "version": "1.1.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,5 +25,6 @@
     "ffmpeg-extract-frames": "^2.0.2",
     "sharp": "^0.31.2",
     "ytdl-core": "^4.11.2"
-  }
+  },
+  "devDependencies": {}
 }
