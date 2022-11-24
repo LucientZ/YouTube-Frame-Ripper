@@ -9,14 +9,14 @@ This tool utilizes node packages to rip frames from a youtube video and convert 
 ### <ins>How to use</ins>
 Before using, install the dependencies in the root directory. This can be done easily utilizing the following command in the terminal.
 
-```
-npm install
+```shell
+$ npm install
 ```
 Or, alternatively:
-```bash
-npm install ffmpeg-extract-frames
-npm install sharp
-npm install ytdl-core
+```shell
+$ npm install ffmpeg-extract-frames
+$ npm install sharp
+$ npm install ytdl-core
 ```
 
 Afterwards installing the dependencies, edit the keyword arguments in 'index.js'. After the package requirements, you'll see a code block that looks like the following:
@@ -45,6 +45,6 @@ Most of the arguments are pretty self-explanatory, but here's a rundown of what 
 
 Once the keyword arguments are set, just run the program and everything will be done automatically. 
 
-```bash
-node ./index.js
+```shell
+$ node ./index.js
 ```
