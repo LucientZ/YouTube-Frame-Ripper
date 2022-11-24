@@ -147,8 +147,8 @@ async function sleep(time){
                 i++;
             }
         }
-        console.log("Frame Conversion Complete.");
-
+        console.log("Frame Conversion Complete. Playing in 5 seconds.");
+        await sleep(10000);
 
         console.log("\u001B[?25l"); //Hides cursor in console
         for(let i = 0; i < frames.length; i++){
