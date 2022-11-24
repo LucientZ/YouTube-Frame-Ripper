@@ -22,11 +22,7 @@
   },
   "homepage": "https://github.com/LucientZ/YouTube-Frame-Ripper#readme",
   "dependencies": {
-    "ffmpeg": "^0.0.4",
     "ffmpeg-extract-frames": "^2.0.2",
-    "fluent-ffmpeg": "^2.1.2",
-    "fs": "^0.0.1-security",
-    "playwright": "^1.27.1",
     "sharp": "^0.31.2",
     "ytdl-core": "^4.11.2"
   }
