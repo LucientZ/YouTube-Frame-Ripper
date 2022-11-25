@@ -1,5 +1,5 @@
 # YouTube-Frame-Ripper
-This tool utilizes node packages to rip frames from a youtube video and convert them to block-text characters. 
+This tool utilizes node modules to rip frames from a youtube video and convert them to block-text characters. 
 
 ### <ins>Dependencies</ins>
 - ffmpeg-extract-frames
