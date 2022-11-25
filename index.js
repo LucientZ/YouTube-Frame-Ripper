@@ -166,7 +166,7 @@ function clearPrint(imgString){
                 let imgBuffer = await sharp(`${dir}/frame-${i}.jpg`).resize(targetWidth, targetHeight, {kernel: sharp.kernel.nearest}).toBuffer();
                 let imgString = await bufferToBlock(imgBuffer);
                 fs.appendFile(`${dir}/${fileOutputName}.dat`, imgString, (error) => {/*pass*/});
-                if (printToConsole){
+                if (printToConsole && textOutput){
                     frames.push(imgString);
                 }
                 i++;
@@ -175,7 +175,7 @@ function clearPrint(imgString){
         
 
 
-        if(printToConsole){
+        if(printToConsole && textOutput){
             for(let i = 5; i > 0; i--){
                 // Counts down until the video starts playing in the console.
                 console.clear()
