@@ -189,11 +189,22 @@ function clearPrint(imgString){
                 playbackSpeed = 24;
             }
 
-            let millisecondsPerFrame = 1000 / playbackSpeed;
-            for(let i = 0; i < frames.length; i++){
-                setTimeout(clearPrint, millisecondsPerFrame, frames.at(i));
-                await sleep(millisecondsPerFrame);
-            }
+            let millisecondsPerFrame = 1000 / playbackSpeed; // mspf = (fps)^-1 * 1000 = 1000 / (fps)
+            
+            // Plays animation back. Less accurate timing at higher fps (high meaning above 5)
+            let frameNum = 0;
+            let playback = setInterval(function() {
+                if(frameNum >= frames.length){
+                    clearInterval(playback);
+                    return;
+                }
+                else{
+                    clearPrint(frames.at(frameNum));
+                    frameNum++;
+                }
+
+            }, millisecondsPerFrame);
+            
             console.log("\u001B[?25h"); //Shows cursor in console    
         }
             
