@@ -11,8 +11,8 @@ const framesPerSecond = 12;                                // Defines how many f
 const textOutput = true;                                   // Defines whether frames will be converted to text.
 
 // Applies if textOutput is true
-const targetWidth = 8;                                     // Width of final frame.
-const targetHeight = 6;                                    // Height of final frame.
+const targetWidth = 24;                                     // Width of final frame.
+const targetHeight = 18;                                    // Height of final frame.
 const printToConsole = true;                               // Prints text frames to the console as an animation. Playback speed will be framesPerSecond. If set to 0 or less, default will be 24.
 
 function pixelToBlock(pix1, pix2, pix3, pix4){
@@ -104,7 +104,7 @@ async function sleep(time){
 
 function clearPrint(imgString){
     console.clear();
-    console.log(imgString);
+    console.log(`\u001B[?25l${imgString}`); // Special character hides cursor in the console.
 }
 
 (async function main(){
@@ -162,6 +162,7 @@ function clearPrint(imgString){
             let i = 1;
             fs.writeFile(`${dir}/${fileOutputName}.dat`, `# Block text animation frames\n# UTF-8\n# Width: ${targetWidth}\n# Height: ${targetHeight}\n\n`, (error) => {/*pass*/});
             while(fs.existsSync(`${dir}/frame-${i}.jpg`)){
+                // Iterates through each image without explicitly knowing how many are in the file.
                 let imgBuffer = await sharp(`${dir}/frame-${i}.jpg`).resize(targetWidth, targetHeight, {kernel: sharp.kernel.nearest}).toBuffer();
                 let imgString = await bufferToBlock(imgBuffer);
                 fs.appendFile(`${dir}/${fileOutputName}.dat`, imgString, (error) => {/*pass*/});
@@ -175,7 +176,6 @@ function clearPrint(imgString){
 
 
         if(printToConsole){
-            console.log("\u001B[?25l"); //Hides cursor in console
             for(let i = 5; i > 0; i--){
                 // Counts down until the video starts playing in the console.
                 console.clear()
