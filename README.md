@@ -37,7 +37,7 @@ const printToConsole = true;                               // Prints text frames
 Most of the arguments are pretty self-explanatory, but here's a rundown of what they do:
 - *url*: Link for the youtube video to have its frames ripped.
 - *fileOutputName*: All relavent files and directories created when ran will have this somewhere in their name.
-- *framesPerSecond*: This represents how many frames should be ripped from the video for every second of the video. This value also affects the playback speed in the console.
+- *framesPerSecond*: This represents how many frames should be ripped from the video for every second of the video. This value also affects the playback speed in the console. Due to limitations with JavaScript, this will not play **exactly** on time. A text data file will be provided that can be parsed with a language which can actually print exactly on time.
 - *textOutput*: This decides whether or not the program will convert every frame to text.
 - *targetWidth*: Target width of the text frames.
 - *targetHeight*: Target height of the text frames.
@@ -48,3 +48,5 @@ Once the keyword arguments are set, just run the program and everything will be 
 ```shell
 $ node ./index.js
 ```
+
+After the program is run, a directory should have been created which includes a video file, images of every frame, and a text data file including every frame converted to text.
