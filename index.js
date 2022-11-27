@@ -16,6 +16,8 @@ const printToConsole = true;                               // Defines whether or
 const targetWidth = 24;                                    // Width of final frame.
 const targetHeight = 18;                                   // Height of final frame.
 
+const ASCIIList = [''];                                    // List of ASCII characters sorted by least to greatest brightness. Works best if there is a smooth gradient.
+
 function pixelToBlock(pix1, pix2, pix3, pix4){
     /*
     Converts black and white pixel data from a 2 x 2 grid to the corresponding block character.
@@ -62,6 +64,10 @@ function pixelToBlock(pix1, pix2, pix3, pix4){
 function rgbToLuminance(r, g, b){
     // Digital UTI BT.601 formula to convert rgb values to a percieved luminance values (0-255)
     return 0.299 * r + 0.587 * g + 0.114 * b
+}
+
+function luminanceToASCII(lum){
+    //stub
 }
 
 async function bufferToASCII(imgBuffer){
