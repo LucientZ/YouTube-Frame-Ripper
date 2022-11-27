@@ -9,7 +9,7 @@ const url = "https://www.youtube.com/watch?v=FtutLA63Cp8"; // Currently only wor
 const fileOutputName = "Bad-Apple";                        // Output name to be appended to all relevant file names.
 const framesPerSecond = 12;                                // Defines how many frames should be converted per second of the video. Enter 0 to be the fps of the video.
 const textOutput = true;                                   // Defines whether frames will be converted to text.
-const localFile = "";      // If there is a local file that you want to extract the frames from, type its location here. Otherwise, leave this string blank. 
+const localFile = "";                                      // If there is a local file that you want to extract the frames from, type its location here. Otherwise, leave this string blank. 
 
 // Applies if textOutput is true
 const printToConsole = true;                               // Defines whether or not the text frames will be printed to the console.This will playback the text frames at a speed as close to the given frames per second as possible
@@ -21,7 +21,6 @@ function pixelToBlock(pix1, pix2, pix3, pix4){
     Converts black and white pixel data from a 2 x 2 grid to the corresponding block character.
     These work best with monospace fonts.
     */
-
     switch("" + pix1 + pix2 + pix3 + pix4){
         case "255255255255":
             return '▇';
@@ -60,6 +59,20 @@ function pixelToBlock(pix1, pix2, pix3, pix4){
     }
 }
 
+function rgbToLuminance(r, g, b){
+    // Digital UTI BT.601 formula to convert rgb values to a percieved luminance values (0-255)
+    return 0.299 * r + 0.587 * g + 0.114 * b
+}
+
+async function bufferToASCII(imgBuffer){
+    const frame = await sharp(imgBuffer).removeAlpha.raw().toBuffer();
+    let final_string = "";
+
+    for(let i = 0; i < frame.length; i += 3){
+        //stub
+    }
+}
+
 
 async function bufferToBlock(imgBuffer){
     // Frame is a list of every pixel in frame. 
@@ -88,7 +101,7 @@ function clearPrint(imgString){
 (async function main(){
     
     try{
-        // Variable Guards
+        // KWARG Variable Guards
         if(targetWidth <= 0 || targetHeight <= 0){
             throw "targetWidth and targetHeight must be greater than 0.";
         }
