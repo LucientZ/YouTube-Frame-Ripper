@@ -12,11 +12,11 @@ const textOutput = true;                                   // Defines whether fr
 const localFile = "";                                      // If there is a local file that you want to extract the frames from, type its location here. Otherwise, leave this string blank. 
 
 // Applies if textOutput is true
-const printToConsole = true;                               // Defines whether or not the text frames will be printed to the console.This will playback the text frames at a speed as close to the given frames per second as possible
+const printToConsole = true;                               // Defines whether or not the text frames will be printed to the console.This will playback the text frames at a speed as close to the given frames per second as possible.
 const targetWidth = 24;                                    // Width of final frame.
 const targetHeight = 18;                                   // Height of final frame.
 
-const ASCIIList = [''];                                    // List of ASCII characters sorted by least to greatest brightness. Works best if there is a smooth gradient.
+const ASCIIList = [''];                                    // List of ASCII characters sorted by least to greatest brightness. Works best if there is a relatively smooth gradient.
 
 function pixelToBlock(pix1, pix2, pix3, pix4){
     /*
@@ -61,13 +61,10 @@ function pixelToBlock(pix1, pix2, pix3, pix4){
     }
 }
 
-function rgbToLuminance(r, g, b){
-    // Digital UTI BT.601 formula to convert rgb values to a percieved luminance values (0-255)
-    return 0.299 * r + 0.587 * g + 0.114 * b
-}
-
-function luminanceToASCII(lum){
-    //stub
+function rgbToASCII(r, g, b){
+    var lum = 0.299 * r + 0.587 * g + 0.114 * b; // Digital UTI BT.601 formula to convert rgb values to a percieved luminance values (0-255). 
+    var index = Math.floor(lum * (ASCIIList.length - 1) / 255); // Converts luminance value to an index value for the list of ASCII characters.
+    return ASCIIList.at(index);
 }
 
 async function bufferToASCII(imgBuffer){
