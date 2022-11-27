@@ -9,11 +9,12 @@ const url = "https://www.youtube.com/watch?v=FtutLA63Cp8"; // Currently only wor
 const fileOutputName = "Bad-Apple";                        // Output name to be appended to all relevant file names.
 const framesPerSecond = 12;                                // Defines how many frames should be converted per second of the video. Enter 0 to be the fps of the video.
 const textOutput = true;                                   // Defines whether frames will be converted to text.
+const localFile = "";      // If there is a local file that you want to extract the frames from, type its location here. Otherwise, leave this string blank. 
 
 // Applies if textOutput is true
-const targetWidth = 24;                                     // Width of final frame.
-const targetHeight = 18;                                    // Height of final frame.
-const printToConsole = true;                               // Prints text frames to the console as an animation. Playback speed will be framesPerSecond. If set to 0 or less, default will be 24.
+const printToConsole = true;                               // Defines whether or not the text frames will be printed to the console.This will playback the text frames at a speed as close to the given frames per second as possible
+const targetWidth = 24;                                    // Width of final frame.
+const targetHeight = 18;                                   // Height of final frame.
 
 function pixelToBlock(pix1, pix2, pix3, pix4){
     /*
@@ -79,13 +80,6 @@ async function bufferToBlock(imgBuffer){
     return final_string;
 }
 
-async function sleep(time){
-    // returns when promise is resolved which will happen in 'time' milliseconds
-    return new Promise(resolve => {
-        setTimeout(resolve, time)
-    });
-}
-
 function clearPrint(imgString){
     console.clear();
     console.log(`\u001B[?25l${imgString}`); // Special character hides cursor in the console.
@@ -93,43 +87,50 @@ function clearPrint(imgString){
 
 (async function main(){
     
-
     try{
         // Variable Guards
         if(targetWidth <= 0 || targetHeight <= 0){
-            console.log("targetWidth and targetHeight must be greater than 0.");
-            return;
+            throw "targetWidth and targetHeight must be greater than 0.";
         }
         else if(!(Number.isInteger(targetWidth) && Number.isInteger(targetHeight))){
-            console.log("targetWidth and targetHeight must be integer values.");
-            return;
+            throw "targetWidth and targetHeight must be integer values.";
         }
         else if(fileOutputName == ""){
-            console.log("File Output Name cannot be an empty string.");
-            return;
+            throw "File Output Name cannot be an empty string.";
+        }
+        else if(!fs.existsSync(localFile)){
+            throw `${localFile} cannot be accessed or does not exist`;
         }
 
         let dir = `./${fileOutputName}-frames`;
         let frames = [];
+        let mpegFile = "";
 
         if(!fs.existsSync(dir)){
             fs.mkdirSync(dir);
         }
 
-        console.log("Waiting for video to download...");
-        await new Promise((resolve) => {
-            ytdl(url).pipe(fs.createWriteStream(`${dir}/${fileOutputName}.mp4`)).on("close", () => {
-                resolve();
-            })
-        });
-        console.log("Download complete.");
+        if(localFile == ""){
+            mpegFile = `${dir}/${fileOutputName}.mp4`;
+            console.log("Waiting for video to download...");
+            await new Promise((resolve) => {
+                ytdl(url).pipe(fs.createWriteStream(mpegFile)).on("close", () => {
+                    resolve();
+                })
+            });
+            console.log("Download complete.");
+        }
+        else{
+            mpegFile = localFile
+        }
+        
 
 
         console.log("Converting video to frames...");
-        let options = {input: `${dir}/${fileOutputName}.mp4`, output: `${dir}/frame-%d.jpg`, fps: framesPerSecond};
+        let options = {input: mpegFile, output: `${dir}/frame-%d.jpg`, fps: framesPerSecond};
         if(framesPerSecond <= 0){
             // When fps is 0 or less, sets it to default
-            options = {input: `${dir}/${fileOutputName}.mp4`, output: `${dir}/frame-%d.jpg`};
+            options = {input: mpegFile, output: `${dir}/frame-%d.jpg`};
         }
         await new Promise((resolve) => {
             extractFrames(options).finally(() => {
@@ -157,16 +158,18 @@ function clearPrint(imgString){
             }
         }
         
+        console.log("Frames done processing.\nPress ENTER to continue...");
+
+        // Waits for some data to be inputted into stdin
+        await new Promise(resolve => {
+            process.stdin.once("data", () => {
+                process.stdin.pause();
+                resolve();
+            });
+        });
 
 
         if(printToConsole && textOutput){
-            for(let i = 5; i > 0; i--){
-                // Counts down until the video starts playing in the console.
-                console.clear()
-                console.log(`Frame Conversion Complete. Playing in ${i} seconds.`);
-                await sleep(1000);
-            }
-
             // Separate variable playbackSpeed used to for console playback
             let playbackSpeed = framesPerSecond;
             if(playbackSpeed <= 0){
@@ -189,10 +192,11 @@ function clearPrint(imgString){
 
             }, millisecondsPerFrame);
             
-            console.log("\u001B[?25h"); //Shows cursor in console    
+            console.log("\u001B[?25h"); //Shows cursor in console
+            
         }
             
-
+        
     }
     catch(error){
         console.log("Error: ", error);
