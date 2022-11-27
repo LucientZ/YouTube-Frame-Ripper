@@ -21,58 +21,42 @@ function pixelToBlock(pix1, pix2, pix3, pix4){
     These work best with monospace fonts.
     */
 
-    if (pix1 == 255 && pix2 == 255 && pix3 == 255 && pix4 == 255){
-        return '▇';
+    switch("" + pix1 + pix2 + pix3 + pix4){
+        case "255255255255":
+            return '▇';
+        case "0255255255":
+            return '▟';
+        case "2550255255":
+            return '▙';
+        case "2552550255":
+            return '▜';
+        case "2552552550":
+            return '▛';
+        case "00255255":
+            return '▅';
+        case "25525500":
+            return '▜'; // Approximation
+        case "25502550":
+            return '▙'; // Approximation
+        case "02550255":
+            return '▜'; // Approximation
+        case "25500255":
+            return '▚';
+        case "02552550" :
+            return '▞';
+        case "255000":
+            return '▘';
+        case "0255000":
+            return '▝';
+        case "002550":
+            return '▖';
+        case "000255":
+            return '▗';
+        case "0000":
+            return ' ';
+        default:
+            return "▇";
     }
-    else if (pix1 == 0 && pix2 == 255 && pix3 == 255 && pix4 == 255){
-        return '▟';
-    }
-    else if (pix1 == 255 && pix2 == 0 && pix3 == 255 && pix4 == 255){
-        return '▙';
-    }
-    else if (pix1 == 255 && pix2 == 255 && pix3 == 0 && pix4 == 255){
-        return '▜';
-    }
-    else if (pix1 == 255 && pix2 == 255 && pix3 == 255 && pix4 == 0){
-        return '▛';
-    }
-    else if (pix1 == 0 && pix2 == 0 && pix3 == 255 && pix4 == 255){
-        return '▅';
-    }
-    else if (pix1 == 255 && pix2 == 255 && pix3 == 0 && pix4 == 0){
-        return '▜'; // Since there isn't a block character with a consistant width that represents two white pixels on top, this is the best approximation.
-    }
-    else if (pix1 == 255 && pix2 == 0 && pix3 == 255 && pix4 == 0){
-        return '▙';
-    }
-    else if (pix1 == 0 && pix2 == 255 && pix3 == 0 && pix4 == 255){
-        return '▜';
-    }
-    else if (pix1 == 255 && pix2 == 0 && pix3 == 0 && pix4 == 255){
-        return '▚';
-    }
-    else if (pix1 == 0 && pix2 == 255 && pix3 == 255 && pix4 == 0){
-        return '▞';
-    }
-    else if (pix1 == 255 && pix2 == 0 && pix3 == 0 && pix4 == 0){
-        return '▘';
-    }
-    else if (pix1 == 0 && pix2 == 255 && pix3 == 0 && pix4 == 0){
-        return '▝';
-    }
-    else if (pix1 == 0 && pix2 == 0 && pix3 == 255 && pix4 == 0){
-        return '▖';
-    }
-    else if (pix1 == 0 && pix2 == 0 && pix3 == 0 && pix4 == 255){
-        return '▗';
-    }
-    else if (pix1 == 0 && pix2 == 0 && pix3 == 0 && pix4 == 0){
-        return ' ';
-    }
-    else{
-        return '▉';
-    }
-
 }
 
 
