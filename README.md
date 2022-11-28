@@ -69,3 +69,15 @@ $ node ./index.js
 ```
 
 After the program is run, a directory should have been created which includes a video file, images of every frame, and a text data file including every frame converted to text.
+
+### <ins>Example Outputs</ins>
+
+![Bad-Apple-Showcase](https://user-images.githubusercontent.com/98664830/204220301-b1ea1ee9-b327-4dbf-973a-0b775492f9ff.gif)
+
+***Example of printing Bad Apple at a low resolution as block text. The left is the default character set that is optimized for Discord whereas the right is a custom character set optimized for mono-space fonts.***
+
+
+
+![Screenshot (679)](https://user-images.githubusercontent.com/98664830/204209460-f3eb8cd1-8d70-4f1f-acd6-b7abd35b5814.png)
+
+***Text-frame data for a relatively obscure underground song that you wouldn't know.***
