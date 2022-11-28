@@ -176,9 +176,11 @@ function clearPrint(imgString){
                 case "block":
                     textWidth = targetWidth / 2;
                     textHeight = targetHeight / 2;
+                    break;
                 default:
                     textWidth = targetWidth;
                     textHeight = targetHeight;
+                    break;
             }
             fs.writeFile(`${dir}/${fileOutputName}.dat`, `# Block text animation frames\n# UTF-8\n# Width: ${textWidth}\n# Height: ${textHeight}\n\n`, (error) => {/*pass*/});
             while(fs.existsSync(`${dir}/frame-${i}.jpg`)){
