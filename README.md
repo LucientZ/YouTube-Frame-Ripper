@@ -25,23 +25,39 @@ Afterwards installing the dependencies, edit the keyword arguments in 'index.js'
 //// KWARGS ////
 const url = "https://www.youtube.com/watch?v=FtutLA63Cp8"; // Currently only works with youtube links.
 const fileOutputName = "Bad-Apple";                        // Output name to be appended to all relevant file names.
-const framesPerSecond = 24;                                // Defines how many frames should be converted per second of the video. Enter 0 to be the fps of the video.
+const framesPerSecond = 12;                                // Defines how many frames should be converted per second of the video. Enter 0 to be the fps of the video.
 const textOutput = true;                                   // Defines whether frames will be converted to text.
+const localFile = "";                                      // If there is a local file that you want to extract the frames from, type its location here. Otherwise, leave this string blank. 
 
 // Applies if textOutput is true
-const targetWidth = 8;                                     // Width of final frame.
-const targetHeight = 6;                                    // Height of final frame.
-const printToConsole = true;                               // Prints text frames to the console as an animation. Playback speed will be framesPerSecond. If set to 0 or less, default will be 24.
+const printToConsole = true;                               // Defines whether or not the text frames will be printed to the console.This will playback the text frames at a speed as close to the given frames per second as possible.
+const targetWidth = 16;                                    // Width of final frame.
+const targetHeight = 12;                                   // Height of final frame.
+const textType = "block";                                  // Text type to convert the frames to. Current options are 'block' | 'ascii'
+
+const ASCIIList = [' ', '.', ':', '-', '=', '+', '*', '#', '%', '@']; // List of ASCII characters sorted by least to greatest brightness. Works best if there is a relatively smooth gradient.
 ```
 
 Most of the arguments are pretty self-explanatory, but here's a rundown of what they do:
-- *url*: Link for the youtube video to have its frames ripped.
-- *fileOutputName*: All relavent files and directories created when ran will have this somewhere in their name.
-- *framesPerSecond*: This represents how many frames should be ripped from the video for every second of the video. This value also affects the playback speed in the console. Due to limitations with JavaScript, this will not play **exactly** on time. A text data file will be provided that can be parsed with a language which can actually print exactly on time.
-- *textOutput*: This decides whether or not the program will convert every frame to text.
-- *targetWidth*: Target width of the text frames.
-- *targetHeight*: Target height of the text frames.
-- *printToConsole*: This decides whether or not the text frames will be played back in the console.
+* ***url***: Link for the youtube video to have its frames ripped.
+
+* ***fileOutputName***: All relavent files and directories created when ran will have this somewhere in their name.
+
+* ***framesPerSecond***: This represents how many frames should be ripped from the video for every second of the video. This value also affects the playback speed in the console. Due to limitations with JavaScript, this will not play *exactly* on time. A text data file will be provided that can be parsed with a language which can actually print exactly on time.
+
+* ***textOutput***: This decides whether or not the program will convert every frame to text.
+
+* ***localFile***: If there is a local mpeg encoded file that you want to rip the frames from, put the location and name of the file here. If not, leave this string empty.
+
+* ***printToConsole***: This decides whether or not the text frames will be played back in the console.
+
+* ***targetWidth***: Target width of the text frames.
+
+* ***targetHeight***: Target height of the text frames.
+
+* ***textType***: If *textOutput* is set to true, this specifies the type of text to render each of the frames as. Currently, the two options are 'ascii' and 'block'. Each of these renders the frames as their respective text type.
+
+* ***ASCIIList***: This is a list of ASCII characters to be used if *textType* is set to 'ascii'. The characters should be sorted from least bright to most bright. 
 
 Once the keyword arguments are set, just run the program and everything will be done automatically. 
 

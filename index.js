@@ -168,7 +168,17 @@ function clearPrint(imgString){
             }
 
             let i = 1;
-            fs.writeFile(`${dir}/${fileOutputName}.dat`, `# Block text animation frames\n# UTF-8\n# Width: ${targetWidth}\n# Height: ${targetHeight}\n\n`, (error) => {/*pass*/});
+            var textWidth = 0;
+            var textHeight = 0;
+            switch(textType.toLowerCase()){
+                case "block":
+                    textWidth = targetWidth / 2;
+                    textHeight = targetHeight / 2;
+                default:
+                    textWidth = targetWidth;
+                    textHeight = targetHeight;
+            }
+            fs.writeFile(`${dir}/${fileOutputName}.dat`, `# Block text animation frames\n# UTF-8\n# Width: ${textWidth}\n# Height: ${textHeight}\n\n`, (error) => {/*pass*/});
             while(fs.existsSync(`${dir}/frame-${i}.jpg`)){
                 // Iterates through each image without explicitly knowing how many are in the file.
                 let imgBuffer = await sharp(`${dir}/frame-${i}.jpg`).resize(targetWidth, targetHeight, {kernel: sharp.kernel.nearest}).toBuffer();
