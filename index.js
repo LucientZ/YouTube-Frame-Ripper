@@ -13,10 +13,11 @@ const localFile = "";                                      // If there is a loca
 
 // Applies if textOutput is true
 const printToConsole = true;                               // Defines whether or not the text frames will be printed to the console.This will playback the text frames at a speed as close to the given frames per second as possible.
-const targetWidth = 24;                                    // Width of final frame.
-const targetHeight = 18;                                   // Height of final frame.
+const targetWidth = 16;                                    // Width of final frame.
+const targetHeight = 12;                                   // Height of final frame.
+const textType = "block";                                  // Text type to convert the frames to. Current options are 'block' | 'ascii'
 
-const ASCIIList = [''];                                    // List of ASCII characters sorted by least to greatest brightness. Works best if there is a relatively smooth gradient.
+const ASCIIList = [' ', '.', ':', '-', '=', '+', '*', '#', '%', '@']; // List of ASCII characters sorted by least to greatest brightness. Works best if there is a relatively smooth gradient.
 
 function pixelToBlock(pix1, pix2, pix3, pix4){
     /*
@@ -68,12 +69,18 @@ function rgbToASCII(r, g, b){
 }
 
 async function bufferToASCII(imgBuffer){
-    const frame = await sharp(imgBuffer).removeAlpha.raw().toBuffer();
+    const frame = await sharp(imgBuffer).removeAlpha().raw().toBuffer();
     let final_string = "";
 
-    for(let i = 0; i < frame.length; i += 3){
-        //stub
+    for(let i = 0; i < targetWidth * targetHeight * 3; i += 3){
+        final_string += rgbToASCII(frame.at(i), frame.at(i + 1), frame.at(i + 2));
+        if((i+3) % (targetWidth * 3) == 0){
+            final_string += "\n";
+        }
     }
+    // Add new line to separate frames properly in output file
+    final_string += "\n";
+    return final_string;
 }
 
 
@@ -114,7 +121,7 @@ function clearPrint(imgString){
         else if(fileOutputName == ""){
             throw "File Output Name cannot be an empty string.";
         }
-        else if(!fs.existsSync(localFile)){
+        else if(!(localFile == "" || fs.existsSync(localFile))){
             throw `${localFile} cannot be accessed or does not exist`;
         }
 
@@ -156,16 +163,28 @@ function clearPrint(imgString){
 
         if(textOutput){
             // To get a block text output, the resolution must have an area that is evenly divisible by 4.
-            if (targetHeight * targetWidth % 4 != 0){
-                console.log("To output to text, area of frames in pixels must be a multiple of 4.");
-                return;
+            if (targetHeight * targetWidth % 4 != 0 && textType == "block"){
+                throw "To output to block-text, area of frames in pixels must be a multiple of 4.";
             }
+
             let i = 1;
             fs.writeFile(`${dir}/${fileOutputName}.dat`, `# Block text animation frames\n# UTF-8\n# Width: ${targetWidth}\n# Height: ${targetHeight}\n\n`, (error) => {/*pass*/});
             while(fs.existsSync(`${dir}/frame-${i}.jpg`)){
                 // Iterates through each image without explicitly knowing how many are in the file.
                 let imgBuffer = await sharp(`${dir}/frame-${i}.jpg`).resize(targetWidth, targetHeight, {kernel: sharp.kernel.nearest}).toBuffer();
-                let imgString = await bufferToBlock(imgBuffer);
+
+                let imgString = "";
+                switch(textType.toLowerCase()){
+                    case "block":
+                        imgString = await bufferToBlock(imgBuffer);
+                        break;
+                    case "ascii":
+                        imgString = await bufferToASCII(imgBuffer);
+                        break;
+                    default:
+                        throw "Invalid text-type specification. Valid textType values are 'block' | 'ascii'";
+                }
+
                 fs.appendFile(`${dir}/${fileOutputName}.dat`, imgString, (error) => {/*pass*/});
                 if (printToConsole && textOutput){
                     frames.push(imgString);
