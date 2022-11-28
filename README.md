@@ -34,6 +34,7 @@ const printToConsole = true;                               // Defines whether or
 const targetWidth = 16;                                    // Width of final frame.
 const targetHeight = 12;                                   // Height of final frame.
 const textType = "block";                                  // Text type to convert the frames to. Current options are 'block' | 'ascii'
+const charSpacing = 0;                                     // Defines how far apart characters should be from each other horizontally with spaces.
 
 const ASCIIList = [' ', '.', ':', '-', '=', '+', '*', '#', '%', '@']; // List of ASCII characters sorted by least to greatest brightness. Works best if there is a relatively smooth gradient.
 ```
@@ -56,6 +57,8 @@ Most of the arguments are pretty self-explanatory, but here's a rundown of what 
 * ***targetHeight***: Target height of the text frames.
 
 * ***textType***: If *textOutput* is set to true, this specifies the type of text to render each of the frames as. Currently, the two options are 'ascii' and 'block'. Each of these renders the frames as their respective text type.
+
+* ***charSpacing***: Defines the amount of spaces between characters in the final frames.
 
 * ***ASCIIList***: This is a list of ASCII characters to be used if *textType* is set to 'ascii'. The characters should be sorted from least bright to most bright. 
 
