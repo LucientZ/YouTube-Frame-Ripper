@@ -133,6 +133,8 @@ function clearPrint(imgString){
             fs.mkdirSync(dir);
         }
 
+        var beginTime = Date.now(); // Begin timer for entire process
+        
         if(localFile == ""){
             mpegFile = `${dir}/${fileOutputName}.mp4`;
             console.log("Waiting for video to download...");
@@ -146,8 +148,8 @@ function clearPrint(imgString){
         else{
             mpegFile = localFile
         }
-        
 
+        var beginTimeRender = Date.now(); // Begin timer for frame rendering
 
         console.log("Converting video to frames...");
         let options = {input: mpegFile, output: `${dir}/frame-%d.jpg`, fps: framesPerSecond};
@@ -202,8 +204,9 @@ function clearPrint(imgString){
                 i++;
             }
         }
-        
-        console.log("Frames done processing.\nPress ENTER to continue...");
+        var endTime = Date.now();
+
+        console.log(`Frames done processing.\nDownloading time:     ${(beginTimeRender - beginTime) / 1000} s\nFrame Rendering time: ${(endTime - beginTimeRender) / 1000} s\nTotal Elapsed time:   ${(endTime - beginTime) / 1000} s\nPress ENTER to continue...`);
 
         // Waits for some data to be inputted into stdin
         await new Promise(resolve => {
