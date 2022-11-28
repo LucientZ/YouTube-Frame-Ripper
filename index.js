@@ -16,6 +16,7 @@ const printToConsole = true;                               // Defines whether or
 const targetWidth = 16;                                    // Width of final frame.
 const targetHeight = 12;                                   // Height of final frame.
 const textType = "block";                                  // Text type to convert the frames to. Current options are 'block' | 'ascii'
+const charSpacing = 0;                                     // Defines how far apart characters should be from each other horizontally with spaces.
 
 const ASCIIList = [' ', '.', ':', '-', '=', '+', 'v', '*', 'W', '#', '%', '@']; // List of ASCII characters sorted by least to greatest brightness. Works best if there is a relatively smooth gradient.
 
@@ -73,7 +74,7 @@ async function bufferToASCII(imgBuffer){
     let final_string = "";
 
     for(let i = 0; i < targetWidth * targetHeight * 3; i += 3){
-        final_string += rgbToASCII(frame.at(i), frame.at(i + 1), frame.at(i + 2));
+        final_string += rgbToASCII(frame.at(i), frame.at(i + 1), frame.at(i + 2)) + " ".repeat(charSpacing);
         if((i+3) % (targetWidth * 3) == 0){
             final_string += "\n";
         }
@@ -93,7 +94,7 @@ async function bufferToBlock(imgBuffer){
     for(let i = 0; i < targetHeight*targetWidth*3; i += targetWidth*3*2){
         let row = "";
         for(let j = i; j < i + targetWidth * 3; j += 6){
-            row += pixelToBlock(frame.at(j), frame.at(j+3), frame.at(j+targetWidth*3), frame.at(j+targetWidth*3 + 3));
+            row += pixelToBlock(frame.at(j), frame.at(j+3), frame.at(j+targetWidth*3), frame.at(j+targetWidth*3 + 3)) + " ".repeat(charSpacing);
         }
         row += '\n';
         final_string += row;
