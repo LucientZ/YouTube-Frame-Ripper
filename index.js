@@ -17,7 +17,7 @@ const targetWidth = 16;                                    // Width of final fra
 const targetHeight = 12;                                   // Height of final frame.
 const textType = "block";                                  // Text type to convert the frames to. Current options are 'block' | 'ascii'
 
-const ASCIIList = [' ', '.', ':', '-', '=', '+', '*', '#', '%', '@']; // List of ASCII characters sorted by least to greatest brightness. Works best if there is a relatively smooth gradient.
+const ASCIIList = [' ', '.', ':', '-', '=', '+', 'v', '*', 'W', '#', '%', '@']; // List of ASCII characters sorted by least to greatest brightness. Works best if there is a relatively smooth gradient.
 
 function pixelToBlock(pix1, pix2, pix3, pix4){
     /*
