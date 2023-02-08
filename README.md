@@ -10,6 +10,8 @@ For a demo of what this tool was created for, watch this YouTube video:
 - ytdl-core
 
 ### <ins>How to use</ins>
+FFmpeg must be installed on your machine in order for this to work. The installation method varies between operating systems, so I recommend looking up a tutorial on how to do this before proceeding. Here is the download page for various binaries of FFmpeg: https://ffmpeg.org/download.html
+
 Before using, install the dependencies in the root directory. This can be done easily utilizing the following command in the terminal.
 
 ```shell
